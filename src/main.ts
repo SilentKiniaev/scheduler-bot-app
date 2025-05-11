@@ -12,7 +12,7 @@ async function bootstrap() {
   const botConfig = configService.get<Configuration['bot']>('bot');
   const appConfig = configService.get<Configuration['app']>('app');
   if (appConfig?.host && botConfig?.webhook?.hookPath) {
-    const token = getBotToken();
+    const token = getBotToken(); 
     console.log('token:', botConfig.token, getBotToken());
     const bot = app.get(getBotToken());
     app.use(bot.webhookCallback(botConfig.webhook.hookPath));
