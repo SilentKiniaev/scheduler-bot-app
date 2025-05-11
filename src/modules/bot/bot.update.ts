@@ -331,7 +331,7 @@ export class BotUpdate {
     async onChooseCityAction(@Ctx() ctx: Context) {
         const [locationId] = parseActionPayload(ctx.callbackQuery['data']); 
         console.log('onChooseCityAction', ctx.chat, locationId);
-        await ctx.reply(`Выберите дату`, this.generateMonthCalendar(new Date(), +locationId));
+        await ctx.editMessageText(`Выберите дату`, this.generateMonthCalendar(new Date(), +locationId));
     }
 
     @Action(/switch-month\?\d+_\d+/)
