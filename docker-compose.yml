@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  pg_db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=appdb
+    ports:
+      - '54324:5432'
+    volumes: 
+      - pg_db:/var/lib/postgresql/data
+    networks:
+      - webnet
+  app:
+    build: .
+    command: npm run start:dev 
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3010:3000
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - pg_db
+networks:
+  webnet:
+volumes:
+  pg_db:
+    driver: local

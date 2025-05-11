@@ -1,0 +1,46 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Generate .env
+        run: |
+          echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env
+          echo "APP_HOST=${{ secrets.APP_HOST }}" >> .env
+          echo "APP_SSL_ENABLED==${{ secrets.APP_SSL_ENABLED }}" >> .env
+          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+          echo "TELEGRAM_WEBHOOK_PATH=${{ secrets.TELEGRAM_WEBHOOK_PATH }}" >> .env
+
+      - name: Copy files to the server
+        run: |
+          rsync -avz --delete -e "ssh -T -o StrictHostKeyChecking=no" ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/opt/scheduler-bot-app
+
+      - name: SSH into server and restart Docker container
+        run: |
+          ssh -T -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd /opt/room-backend
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d --build
+          EOF
