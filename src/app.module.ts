@@ -21,9 +21,12 @@ import * as path from 'path';
       useFactory: (config: ConfigService) => {
         const botConfig = config.get<Configuration['bot']>('bot');
         const appConfig = config.get<Configuration['app']>('app');
+        console.log('appConfig.host:', appConfig?.host);
+        console.log('botConfig.webhook.hookPath:', botConfig?.webhook?.hookPath);
         return {
           token: botConfig.token,
           launchOptions: appConfig?.host && botConfig?.webhook?.hookPath ? {
+            dropPendingUpdates: true,
             webhook: {
               domain: appConfig.host,
               hookPath: botConfig.webhook.hookPath,
