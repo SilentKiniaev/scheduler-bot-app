@@ -25,13 +25,13 @@ import * as path from 'path';
         console.log('botConfig.webhook.hookPath:', botConfig?.webhook?.hookPath);
         return {
           token: botConfig.token,
-          launchOptions: appConfig?.host && botConfig?.webhook?.hookPath ? {
-            dropPendingUpdates: true,
-            webhook: {
-              domain: appConfig.host,
-              hookPath: botConfig.webhook.hookPath,
-            }
-          } : {},
+          // launchOptions: appConfig?.host && botConfig?.webhook?.hookPath ? {
+          //   dropPendingUpdates: true,
+          //   webhook: {
+          //     domain: appConfig.host,
+          //     hookPath: botConfig.webhook.hookPath,
+          //   }
+          // } : {},
           include: [BotModule]
         }
       },
