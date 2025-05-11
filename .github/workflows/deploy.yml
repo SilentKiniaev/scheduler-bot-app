@@ -39,7 +39,7 @@ jobs:
       - name: SSH into server and restart Docker container
         run: |
           ssh -T -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /opt/room-backend
+            cd /opt/scheduler-bot-app
             docker-compose down
             docker-compose pull
             docker-compose up -d --build
